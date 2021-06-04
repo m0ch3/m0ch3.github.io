@@ -31,6 +31,33 @@
     
     
     <entry>
+      <title>《白帽子讲web安全》读书笔记（未完）</title>
+      <link href="2020/05/01/book-WH_on_WebSecurity/"/>
+      <url>2020/05/01/book-WH_on_WebSecurity/</url>
+      
+        <content type="html"><![CDATA[<h1 id="浏览器安全"><a href="#浏览器安全" class="headerlink" title="浏览器安全"></a>浏览器安全</h1><h2 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h2><p><strong>浏览器同源策略，限制了来自不同源的document或者脚本，对当前document读取或者设置某些属性。</strong></p><p>对于js，影响同源的因素包括host，子域名，端口，协议，即“同host，同子域名，同端口，同协议”才被认为是同源。</p><p>注意：页面加载的js来源域不重要，重要的是加载js页面所在的页面加载域，例如：<br>a.com通过<code>&lt;script src=http://b.com/b.js&gt;&lt;/script&gt;</code>加载了b.com上面的b.js，但是b.js是运行在a.com中的，因此对于a.com，b.js的源（Origin）是a.com。类似带有src属性的可远程加载资源的标签，都可以跨域加载，不受同源策略限制，但是浏览器限制了js的权限，使其不能读写返回的内容。</p><p>对于XMLHttpRequest来说，它可以访问来自同源对象的内容，但是受到同源策略限制，不能跨域访问资源，在ajax开发中应当注意。</p><p>除此还有一些插件会遵从各自的同源策略，如Flash，Java Applet，Silverlight，Google Gears都有自己的控制策略。<br>Flash的控制策略通过目标网站根目录下面的crossdomain.xml来判断是否允许跨域访问。</p><h2 id="浏览器沙箱"><a href="#浏览器沙箱" class="headerlink" title="浏览器沙箱"></a>浏览器沙箱</h2><p>参考<a href="https://www.cnblogs.com/suihang/p/12718528.html">Chrome浏览器架构</a>。<br>核心点：渲染引擎由Sanbox隔离，网页代码和浏览器内核/操作系统通信需要通过IPC channel，会进行安全检查。</p><h2 id="高速发展的浏览器安全"><a href="#高速发展的浏览器安全" class="headerlink" title="高速发展的浏览器安全"></a>高速发展的浏览器安全</h2><p>CSP头（X-Content-Security-Policy，存在于返回包中，需要浏览器支持），控制浏览器的信任域。</p><h1 id="跨站脚本攻击（XSS）"><a href="#跨站脚本攻击（XSS）" class="headerlink" title="跨站脚本攻击（XSS）"></a>跨站脚本攻击（XSS）</h1><h2 id="XSS简介"><a href="#XSS简介" class="headerlink" title="XSS简介"></a>XSS简介</h2><p>反射型XSS，存储型XSS，DOM型XSS</p><h2 id="XSS攻击进阶"><a href="#XSS攻击进阶" class="headerlink" title="XSS攻击进阶"></a>XSS攻击进阶</h2><p>最常见的XSS payload，就是cookie劫持。<br>高级XSS payload：</p><ul><li>构造GET请求（URL）/POST请求（构造form表单）诱导点击</li><li>js伪造页面进行钓鱼</li><li>读取UA</li></ul><p>XSS攻击框架：Beef framework</p><h2 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h2>]]></content>
+      
+      
+      <categories>
+          
+          <category> 读书笔记 </category>
+          
+          <category> 白帽子讲Web安全 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 读书笔记 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>使用Cloudflare Workers加速GitHub资源</title>
       <link href="2020/04/07/cloudflare-worker/"/>
       <url>2020/04/07/cloudflare-worker/</url>
