@@ -13,7 +13,7 @@
       
       <categories>
           
-          <category> Tools </category>
+          <category> IP </category>
           
           <category> 路由 </category>
           
@@ -69,7 +69,7 @@
       
       <categories>
           
-          <category> Tools </category>
+          <category> IP </category>
           
           <category> 路由 </category>
           
@@ -212,7 +212,7 @@
       
       <categories>
           
-          <category> Tools </category>
+          <category> IP </category>
           
       </categories>
       
@@ -256,8 +256,8 @@
     
     <entry>
       <title>Linux GUI个性化部署</title>
-      <link href="/2022/08/04/IP/linux_config/"/>
-      <url>/2022/08/04/IP/linux_config/</url>
+      <link href="/2022/08/04/Tools/linux_config/"/>
+      <url>/2022/08/04/Tools/linux_config/</url>
       
         <content type="html"><![CDATA[<h1 id="Xubuntu"><a href="#Xubuntu" class="headerlink" title="Xubuntu"></a>Xubuntu</h1><h2 id="下载安装"><a href="#下载安装" class="headerlink" title="下载安装"></a>下载安装</h2><p>xubuntu官网<a href="https://xubuntu.org/">xubuntu.org</a></p><h2 id="安装加速"><a href="#安装加速" class="headerlink" title="安装加速"></a>安装加速</h2><p>安装时选择<code>试用Xubuntu</code>，然后打开terminal，执行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo --preserve-env=DBUS_SESSION_BUS_ADDRESS,XDG_DATA_DIRS,XDG_RUNTIME_DIR -i</span><br><span class="line"><span class="built_in">export</span> http_proxy=<span class="string">&quot;http://IP:PORT&quot;</span></span><br><span class="line">ubiquity gtk_ui</span><br></pre></td></tr></table></figure><h2 id="安装后配置"><a href="#安装后配置" class="headerlink" title="安装后配置"></a>安装后配置</h2><ul><li><p>安装后执行<code>apt update &amp;&amp; apt upgrade -y</code></p></li><li><p>修改<code>/etc/sudoers</code>配置无密码sudo: <code>%sudoALL=(ALL:ALL) NOPASSWD: ALL</code></p></li><li><p>安装中文字体：<code>apt install ttf-wqy-microhei</code></p></li></ul><h2 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h2><ul><li><p>外观-字体-DPI-150%，字体大小10-11</p></li><li><p>电源管理器-显示-从不</p></li><li><p>屏幕保护-禁用屏幕保护程序</p></li></ul><h1 id="Xfce主题"><a href="#Xfce主题" class="headerlink" title="Xfce主题"></a>Xfce主题</h1><h2 id="下载主题"><a href="#下载主题" class="headerlink" title="下载主题"></a>下载主题</h2><p>仿MacOS WhiteSur：</p><ul><li><p><a href="https://github.com/vinceliuice/WhiteSur-gtk-theme">WhiteSur-gtk-theme</a>: <code>sudo ./install.sh</code> and <code>./tweaks.sh -f</code></p></li><li><p><a href="https://github.com/vinceliuice/WhiteSur-icon-theme">WhiteSur-icon-theme</a>: <code>sudo ./install.sh</code> and <code>sudo chmod -R 755 /usr/share/icons/WhiteSur /usr/share/icons/WhiteSur-dark</code></p></li><li><p><a href="https://github.com/vinceliuice/WhiteSur-cursors">WhiteSur-cursors</a>: <code>sudo ./install.sh</code></p></li></ul><h1 id="软件"><a href="#软件" class="headerlink" title="软件"></a>软件</h1><h2 id="libreoffice"><a href="#libreoffice" class="headerlink" title="libreoffice"></a>libreoffice</h2><p>卸载libreoffice: <code>apt autopurge libreoffice*</code></p><h2 id="WPS-For-Linux"><a href="#WPS-For-Linux" class="headerlink" title="WPS For Linux"></a>WPS For Linux</h2><p><a href="https://linux.wps.cn/#">WPS</a></p><h2 id="Edge浏览器"><a href="#Edge浏览器" class="headerlink" title="Edge浏览器"></a>Edge浏览器</h2><p><a href="https://www.microsoft.com/zh-cn/edge#evergreen">Edge</a></p><h2 id="vscode"><a href="#vscode" class="headerlink" title="vscode"></a>vscode</h2><p><a href="https://code.visualstudio.com/download">vscode</a></p><h2 id="Typora"><a href="#Typora" class="headerlink" title="Typora"></a>Typora</h2><p><a href="https://typora.io/#linux">Typora</a></p><h2 id="nodejs"><a href="#nodejs" class="headerlink" title="nodejs"></a>nodejs</h2><p>两种方式：</p><ol><li>离线安装：<a href="https://nodejs.org/">nodejs</a>官网离线包 &amp; 更新：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo npm install n <span class="comment"># 安装n管理器</span></span><br><span class="line">sudo n stable <span class="comment"># 通过n安装稳定版nodejs</span></span><br></pre></td></tr></table></figure></li><li>apt安装：<code>apt install nodejs npm</code></li></ol><h2 id="Remmina远程桌面客户端"><a href="#Remmina远程桌面客户端" class="headerlink" title="Remmina远程桌面客户端"></a>Remmina远程桌面客户端</h2><p>apt安装: <code>apt install remmina</code></p><h2 id="samba"><a href="#samba" class="headerlink" title="samba"></a>samba</h2><ul><li>安装：<code>apt install samba</code></li><li>配置文件：<code>/etc/samba/smb.conf</code></li><li>文件和打印共享服务：<code>smbd.service</code></li><li>NetBIOS服务：<code>nmbd.service</code></li></ul><h2 id="qBittorrent"><a href="#qBittorrent" class="headerlink" title="qBittorrent"></a>qBittorrent</h2><p><a href="https://github.com/c0re100/qBittorrent-Enhanced-Edition">qBittorrent-enhanced</a>，使用<code>nox</code>版，无GUI，使用web访问和管理</p><h2 id="cloudflare-ddns"><a href="#cloudflare-ddns" class="headerlink" title="cloudflare-ddns"></a>cloudflare-ddns</h2><blockquote><p>参考&lt;本地python配置cloudflare-ddns&gt;一篇</p></blockquote><h2 id="alist"><a href="#alist" class="headerlink" title="alist"></a>alist</h2><p>docker安装：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --restart=always -v /path/to/volume:/opt/alist/data -e PUID=1000 -e PGID=1000 -e UMASK=022 -p 5244:5244 --name=<span class="string">&quot;alist&quot;</span> xhofe/alist:latest</span><br></pre></td></tr></table></figure><p>更新：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker stop alist</span><br><span class="line">docker <span class="built_in">rm</span> alist</span><br><span class="line">docker pull xhofe/alist:latest</span><br><span class="line">docker run -d --restart=always -v /path/to/volume:/opt/alist/data -e PUID=1000 -e PGID=1000 -e UMASK=022 -p 5244:5244 --name=<span class="string">&quot;alist&quot;</span> xhofe/alist:latest</span><br></pre></td></tr></table></figure>]]></content>
       
@@ -316,7 +316,7 @@
       
       <categories>
           
-          <category> Tools </category>
+          <category> IP </category>
           
       </categories>
       
