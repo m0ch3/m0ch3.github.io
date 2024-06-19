@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>使用dnsmasq部署DHCPv4服务</title>
+      <link href="/2024/06/19/Network/dhcp/"/>
+      <url>/2024/06/19/Network/dhcp/</url>
+      
+        <content type="html"><![CDATA[<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install dnsmasq</span><br></pre></td></tr></table></figure><h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><p>新建文件<code>/etc/dnsmasq.d/dhcp-server</code>：</p><blockquote><p>配置项意义参考<code>dnsmasq</code>的<code>man手册</code></p></blockquote><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">interface=ens3</span><br><span class="line">port=0</span><br><span class="line">bind-interfaces</span><br><span class="line"></span><br><span class="line">dhcp-range=set:rangev4, 192.168.193.2, 192.168.193.253, 255.255.255.0, 2h</span><br><span class="line">dhcp-option=tag:rangev4, option:dns-server, 223.5.5.5, 119.29.29.29</span><br><span class="line">dhcp-option=tag:rangev4, option:router, 192.168.193.1</span><br><span class="line">dhcp-leasefile=/var/lib/dhcp/dnsmasq.leases</span><br><span class="line"></span><br><span class="line">cache-size=150</span><br><span class="line"></span><br><span class="line">log-dhcp</span><br><span class="line"></span><br><span class="line">#conf-file=/etc/dnsmasq.more.conf</span><br><span class="line">#conf-dir=/etc/dnsmasq.d</span><br><span class="line"></span><br><span class="line">dhcp-name-match=set:wpad-ignore,wpad</span><br><span class="line">dhcp-ignore-names=tag:wpad-ignore</span><br></pre></td></tr></table></figure><h1 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h1><p><code>dnsmasq.service</code>：</p><blockquote><p>正常安装<code>dnsmasq</code>会自动生成<code>dnsmasq.service</code>，同样的，要确保<code>ens3</code>已创建成功后启动，所以<code>Wants</code>&amp;<code>After</code>后追加<code>NetworkManager-wait-online.service</code>，此service脚本供参考。</p></blockquote><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=dnsmasq - A lightweight DHCP and caching DNS server</span><br><span class="line">Requires=network.target</span><br><span class="line">Wants=nss-lookup.target NetworkManager-wait-online.service</span><br><span class="line">Before=nss-lookup.target</span><br><span class="line">After=network.target NetworkManager-wait-online.service</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">......</span><br></pre></td></tr></table></figure><p>重新启动<code>dnsmasq</code>:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> dnsmasq</span><br><span class="line">systemctl restart dnsmasq</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> 网络 </category>
+          
+          <category> 路由 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> DHCPv4 </tag>
+            
+            <tag> IPv4 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>开机自启动</title>
       <link href="/2024/06/06/Tools/autostart/"/>
       <url>/2024/06/06/Tools/autostart/</url>
@@ -81,7 +110,7 @@
     
     
     <entry>
-      <title>自定义简易linux DHCPv6-PD路由</title>
+      <title>自定义简易DHCPv6-PD路由</title>
       <link href="/2023/06/07/Network/router/"/>
       <url>/2023/06/07/Network/router/</url>
       
