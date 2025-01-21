@@ -1,0 +1,439 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Linux主流发行版配置IP | m0ch</title><meta name="author" content="m0ch"><meta name="copyright" content="m0ch"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="network.service(RHEL系) 适用于centos&#x2F;redhat  配置文件&#x2F;etc&#x2F;sysconfig&#x2F;network-scripts&#x2F;ifcfg-eth0  对应服务为network.service，可以通过yum install network-scripts来安装传统的network.service，不过redhat说，在下一个rhel的大版本里将彻底废除，因此不建">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux主流发行版配置IP">
+<meta property="og:url" content="https://www.m0ch.org/2022/05/19/Network/linux_set_ip/index.html">
+<meta property="og:site_name" content="m0ch">
+<meta property="og:description" content="network.service(RHEL系) 适用于centos&#x2F;redhat  配置文件&#x2F;etc&#x2F;sysconfig&#x2F;network-scripts&#x2F;ifcfg-eth0  对应服务为network.service，可以通过yum install network-scripts来安装传统的network.service，不过redhat说，在下一个rhel的大版本里将彻底废除，因此不建">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.m0ch.org/localimage/random/top21.jpg">
+<meta property="article:published_time" content="2022-05-19T02:28:37.000Z">
+<meta property="article:modified_time" content="2023-11-24T05:46:21.000Z">
+<meta property="article:author" content="m0ch">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="IP配置">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.m0ch.org/localimage/random/top21.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Linux主流发行版配置IP",
+  "url": "https://www.m0ch.org/2022/05/19/Network/linux_set_ip/",
+  "image": "https://www.m0ch.org/localimage/random/top21.jpg",
+  "datePublished": "2022-05-19T02:28:37.000Z",
+  "dateModified": "2023-11-24T05:46:21.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "m0ch",
+      "url": "https://www.m0ch.org/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/localimage/config/favicon.ico"><link rel="canonical" href="https://www.m0ch.org/2022/05/19/Network/linux_set_ip/index.html"><link rel="preconnect"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 6 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: '/pluginsSrc/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Linux主流发行版配置IP',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="web_bg" style="background-image: url(/localimage/config/background.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src= "/localimage/config/loading.gif" data-lazy-src="/localimage/config/avatar.png" onerror="this.onerror=null;this.src='/localimage/config/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">21</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">31</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">11</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/nav/"><i class="fa-fw fas fa-compass"></i><span> 导航</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 更多</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movie/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li><li><a class="site-page child" href="/ai/"><i class="fa-fw fas fa-robot"></i><span> 人工智能</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-address-card"></i><span> 关于</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/localimage/random/top21.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">m0ch</span></a><a class="nav-page-title" href="/"><span class="site-name">Linux主流发行版配置IP</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/nav/"><i class="fa-fw fas fa-compass"></i><span> 导航</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 更多</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movie/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li><li><a class="site-page child" href="/ai/"><i class="fa-fw fas fa-robot"></i><span> 人工智能</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-address-card"></i><span> 关于</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Linux主流发行版配置IP</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-05-19T02:28:37.000Z" title="发表于 2022-05-19 10:28:37">2022-05-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-11-24T05:46:21.000Z" title="更新于 2023-11-24 13:46:21">2023-11-24</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Network/">Network</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Network/Tools/">Tools</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>11分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="network-service-RHEL系"><a href="#network-service-RHEL系" class="headerlink" title="network.service(RHEL系)"></a>network.service(RHEL系)</h1><blockquote>
+<p>适用于centos&#x2F;redhat</p>
+</blockquote>
+<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><p><code>/etc/sysconfig/network-scripts/ifcfg-eth0</code></p>
+<blockquote>
+<p>对应服务为network.service，可以通过<code>yum install network-scripts</code>来安装传统的network.service，不过redhat说，在下一个rhel的大版本里将彻底废除，因此不建议使用network.service</p>
+</blockquote>
+<p><code>ifcfg-eth0</code>常见内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">HWADDR=&quot;52:54:00:6f:bb:05&quot;</span><br><span class="line">TYPE=&quot;Ethernet&quot;</span><br><span class="line">BOOTPROTO=&quot;static&quot;</span><br><span class="line">DEFROUTE=&quot;yes&quot;</span><br><span class="line">PEERDNS=&quot;yes&quot;</span><br><span class="line">PEERROUTES=&quot;yes&quot;</span><br><span class="line">IPV4_FAILURE_FATAL=&quot;no&quot;</span><br><span class="line">IPV6INIT=&quot;yes&quot;</span><br><span class="line">IPV6_AUTOCONF=&quot;yes&quot;</span><br><span class="line">IPV6_DEFROUTE=&quot;yes&quot;</span><br><span class="line">IPV6_PEERDNS=&quot;yes&quot;</span><br><span class="line">IPV6_PEERROUTES=&quot;yes&quot;</span><br><span class="line">IPV6_FAILURE_FATAL=&quot;no&quot;</span><br><span class="line">NAME=&quot;eth0&quot;</span><br><span class="line">UUID=&quot;d2278821-f0e9-48b4-8b3f-24768d51765d&quot;</span><br><span class="line">ONBOOT=&quot;yes&quot;</span><br><span class="line">IPADDR=192.168.1.12</span><br><span class="line">GATEWAY=192.168.1.1</span><br><span class="line">NETMASK=255.255.255.0</span><br><span class="line">DNS1=192.168.1.1</span><br></pre></td></tr></table></figure>
+<h2 id="配置参数说明"><a href="#配置参数说明" class="headerlink" title="配置参数说明"></a>配置参数说明</h2><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>HWADDR</td>
+<td></td>
+<td>网卡的MAC地址</td>
+</tr>
+<tr>
+<td>TYPE</td>
+<td>Ethernet</td>
+<td>一般为Ethernet以太网</td>
+</tr>
+<tr>
+<td>DEVICE</td>
+<td>eth0</td>
+<td>设备名</td>
+</tr>
+<tr>
+<td>NAME</td>
+<td>eth0</td>
+<td>连接名</td>
+</tr>
+<tr>
+<td>NM_CONTROLLED</td>
+<td>no</td>
+<td>是否可以由NetworkManager托管</td>
+</tr>
+<tr>
+<td>ONBOOT</td>
+<td>yes</td>
+<td>开机自动启用该连接</td>
+</tr>
+<tr>
+<td>BOOTPROTO</td>
+<td>none&#x2F;dhcp&#x2F;static</td>
+<td>设置为none禁止DHCP，设置为static启用静态IP地址，设置为dhcp开启DHCP服务</td>
+</tr>
+<tr>
+<td>PEERDNS</td>
+<td>yes</td>
+<td>设置PEERDNS&#x3D;yes（这也是系统的默认配置）则启用该网络设备时，会修改或生成resolv.conf文件，设置PEERDNS&#x3D;no，则不对resolv.conf做任何变动。</td>
+</tr>
+<tr>
+<td>PEERROUTES</td>
+<td>yes</td>
+<td>设置PEERROUTES&#x3D;yes（这也是系统的默认配置）则启用该网络设备时，会修改系统路由表，设置PEERDNS&#x3D;no，则不对系统路由表做任何变动。</td>
+</tr>
+<tr>
+<td>UUID</td>
+<td></td>
+<td>系统全局唯一标识符，可以通过uuidgen eth0生成</td>
+</tr>
+<tr>
+<td>SLAVE</td>
+<td></td>
+<td>指定了该接口是一个接合界面的组件</td>
+</tr>
+<tr>
+<td>MASTER</td>
+<td>bond0</td>
+<td>指定bond模式下的master</td>
+</tr>
+<tr>
+<td>BRIDGE</td>
+<td>br0</td>
+<td>设置桥接网卡</td>
+</tr>
+<tr>
+<td>USERCTL</td>
+<td>no</td>
+<td>是否允许非root用户控制该设备，默认设置为no，只能用root用户更改</td>
+</tr>
+<tr>
+<td>DEFROUTE</td>
+<td>yes</td>
+<td>默认路由(yes&#x2F;no)，一般为yes</td>
+</tr>
+<tr>
+<td>PREFIX</td>
+<td>24</td>
+<td>子网掩码24位</td>
+</tr>
+<tr>
+<td>IPADDR</td>
+<td></td>
+<td>IP地址</td>
+</tr>
+<tr>
+<td>NETMASK</td>
+<td></td>
+<td>子网掩码</td>
+</tr>
+<tr>
+<td>DNS1</td>
+<td></td>
+<td>主DNS服务器</td>
+</tr>
+<tr>
+<td>DNS2</td>
+<td></td>
+<td>备用DNS服务器</td>
+</tr>
+<tr>
+<td>IPV4_FAILURE_FATAL</td>
+<td>no</td>
+<td>如果ipv4配置失败禁用设备</td>
+</tr>
+<tr>
+<td>IPV6INIT</td>
+<td>yes</td>
+<td>是否启用IPv6的接口</td>
+</tr>
+<tr>
+<td>IPV6_AUTOCONF</td>
+<td>yes</td>
+<td></td>
+</tr>
+<tr>
+<td>IPV6_DEFROUTE</td>
+<td>yes</td>
+<td></td>
+</tr>
+<tr>
+<td>IPV6_PEERDNS</td>
+<td>yes</td>
+<td></td>
+</tr>
+<tr>
+<td>IPV6_PEERROUTES</td>
+<td>yes</td>
+<td></td>
+</tr>
+<tr>
+<td>IPV6_FAILURE_FATAL</td>
+<td>no</td>
+<td>如果ipv6配置失败禁用设备</td>
+</tr>
+</tbody></table>
+<h2 id="配置生效"><a href="#配置生效" class="headerlink" title="配置生效"></a>配置生效</h2><p>配置完成后需要重启network服务：<code>systemctl restart network</code>或<code>service network restart</code></p>
+<h1 id="network-service-Debian"><a href="#network-service-Debian" class="headerlink" title="network.service(Debian)"></a>network.service(Debian)</h1><p>使用<code>ifconfig</code>及其配置文件<code>/etc/network/interfaces</code>来配置网络</p>
+<h2 id="配置文件及参数说明"><a href="#配置文件及参数说明" class="headerlink" title="配置文件及参数说明"></a>配置文件及参数说明</h2><p><code>/etc/network/interfaces</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">auto lo # 网卡自启动</span><br><span class="line">iface lo inet loopback # 配置lo的类型为loopback</span><br><span class="line"></span><br><span class="line">auto ens33 # 网卡自启动</span><br><span class="line">allow-hotplug ens33</span><br><span class="line">iface ens33 inet static # 配置ens33的类型为静态IP</span><br><span class="line">address 192.168.2.22 # IP地址</span><br><span class="line">netmask 255.255.255.0 # 掩码</span><br><span class="line">gateway 192.168.2.2 # 网关</span><br><span class="line">network 192.168.2.0 # 可选，所在网络号，默认自动配置</span><br><span class="line">broadcast 192.168.2.255 # 可选，广播地址，默认自动配置</span><br><span class="line">dns-nameservers 8.8.8.8 192.168.2.1 # dns服务器</span><br></pre></td></tr></table></figure>
+<p>注释可能导致配置异常，实际使用中建议清除注释。</p>
+<h2 id="配置生效-1"><a href="#配置生效-1" class="headerlink" title="配置生效"></a>配置生效</h2><p><code>systemctl restart networking</code></p>
+<h1 id="netplan-Ubuntu"><a href="#netplan-Ubuntu" class="headerlink" title="netplan(Ubuntu)"></a>netplan(Ubuntu)</h1><blockquote>
+<p>原文引用自<a target="_blank" rel="noopener" href="https://www.myfreax.com/how-to-configure-static-ip-address-on-ubuntu-20-04/">如何在Ubuntu 20.04上配置静态IP地址</a></p>
+</blockquote>
+<p>Ubuntu 17.10及以后版本使用<code>netplan</code>作为默认网络配置工具，更早版本同Debian。Netplan配置文件使用YAML语法编写，文件扩展名为.yaml。Netplan支持两个渲染器：NetworkManager和Systemd-networked。NetworkManager主要在台式机上使用，而Systemd-networked在没有GUI的服务器上使用。</p>
+<h2 id="配置文件-1"><a href="#配置文件-1" class="headerlink" title="配置文件"></a>配置文件</h2><p>Netplan配置文件存储在<code>/etc/netplan</code>目录中<br>示例<code>/etc/netplan/01-netcfg.yaml</code></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">network:</span></span><br><span class="line">  <span class="attr">version:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">renderer:</span> <span class="string">networkd</span></span><br><span class="line">  <span class="attr">ethernets:</span></span><br><span class="line">    <span class="attr">ens3:</span></span><br><span class="line">      <span class="attr">dhcp4:</span> <span class="literal">false</span></span><br><span class="line">      <span class="attr">addresses:</span> [<span class="number">192.168</span><span class="number">.121</span><span class="number">.221</span><span class="string">/24</span>]</span><br><span class="line">      <span class="attr">routes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">to:</span> <span class="string">default</span></span><br><span class="line">          <span class="attr">via:</span> <span class="number">192.168</span><span class="number">.121</span><span class="number">.1</span></span><br><span class="line">      <span class="attr">nameservers:</span></span><br><span class="line">        <span class="attr">addresses:</span> [<span class="number">223.5</span><span class="number">.5</span><span class="number">.5</span>, <span class="number">119.29</span><span class="number">.29</span><span class="number">.29</span>]</span><br><span class="line">  <span class="attr">wifis:</span></span><br><span class="line">    <span class="attr">wlan0:</span></span><br><span class="line">      <span class="attr">dhcp4:</span> <span class="literal">true</span></span><br><span class="line">      <span class="attr">access-points:</span></span><br><span class="line">        <span class="attr">&quot;wifi-ssid&quot;:</span></span><br><span class="line">        <span class="attr">password:</span> <span class="string">&quot;password&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="配置说明"><a href="#配置说明" class="headerlink" title="配置说明"></a>配置说明</h2><p>每个Netplan Yaml文件都以<code>network</code>键开头，该键至少包含两个必需元素。第一个必需元素是网络配置格式的版本<code>version</code>，第二个是设备类型。 设备类型可以是<code>ethernets</code>，<code>bonds</code>，<code>bridges</code>, <code>vlans</code>, <code>wifis</code>。</p>
+<p>上面的配置还有一行<code>renderer</code>类型的行。 如果您以服务器模式安装Ubuntu，则开箱即用，<code>networkd</code>作为renderer渲染器的后端；桌面模式安装则<code>NetworkManager</code>作为renderer渲染器的后端。</p>
+<p>在设备类型<code>ethernets</code>下，可以指定一个或多个网络接口。</p>
+<p>编辑Yaml文件时，请确保遵循YAML代码缩进标准。 如果语法不正确，则更改将不会应用。</p>
+<h2 id="配置生效-2"><a href="#配置生效-2" class="headerlink" title="配置生效"></a>配置生效</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">netplan generate <span class="comment"># 配置检查</span></span><br><span class="line">netplan apply <span class="comment"># 配置生效</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="NetworkManager"><a href="#NetworkManager" class="headerlink" title="NetworkManager"></a>NetworkManager</h1><blockquote>
+<p>原文引用自<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/52731316">NetworkManager设置</a></p>
+</blockquote>
+<p>通常的linux发行版对于网络的配置方法一般会同时支持network.service（即配置和使用<code>/etc/sysconfig/network-scripts/</code>下的配置文件来配置网络，对于debian是<code>/etc/network/interfaces</code>等）和NetworkManager.service（简称NM）。默认情况下，这2个服务都开启，而且功能上是平行的，可以通过任意一个来配置网络，正常的情况下通过NM来配置网络后它会自动把配置同步到network.service的配置中。</p>
+<p>在NM里，有2个层级：<strong>连接（connection）和设备（device）</strong>，连接的配置记录在<code>/etc/NetworkManager/system-connections/</code>内（对于ubuntu），<strong>通常NM的管理是以连接为单位的，在连接的配置文件里指明设备名</strong>，所以我们在NM的所有配置目录里找不到针对设备的配置文件，只有针对连接的配置文件，就像你的手机wifi可以记住多个无线连接一样，<strong>多个连接可以使用同一个设备，但同一时刻，一个设备只能有一个连接活跃</strong>。意思就是你的手机wifi在一个时刻只能连接一个wifi。可以通过 nmcli connetion up&lt;连接&gt; 来切换连接。</p>
+<p>对于一个device有4种常见状态，使用<code>nmcli device</code>查看：</p>
+<ul>
+<li>connected：已被NM托管，并且当前有活跃的connection</li>
+<li>disconnected：已被NM托管，但是当前没有活跃的connection</li>
+<li>unmanaged：未被NM托管，就是不让NM动这个设备相关的任何操作</li>
+<li>unavailable：不可用，NM无法托管，通常出现于网卡link为down的时候（比如ip link set ethX down）</li>
+</ul>
+<p>对于任意设备上的任一connection通常有2种状态，使用<code>nmcli connection</code>查看：</p>
+<ul>
+<li>活跃（带颜色字体）：表示当前该connection是正在使用的</li>
+<li>非活跃（正常字体）：表示当前该connection没有连接</li>
+</ul>
+<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><ul>
+<li>nmcli：命令行。这是最常用的工具，支持tab补全</li>
+<li>nmtui：在shell终端开启文本图形界面</li>
+<li>Freedesktop applet：如GNOME上自带的网络管理工具</li>
+<li>nm-connection-editor图形配置工具</li>
+<li>cockpit：redhat自带的基于web图形界面的”驾驶舱”工具，具有dashborad和基础管理功能</li>
+</ul>
+<h2 id="nmcli常用命令一览"><a href="#nmcli常用命令一览" class="headerlink" title="nmcli常用命令一览"></a>nmcli常用命令一览</h2><h3 id="对于connection"><a href="#对于connection" class="headerlink" title="对于connection"></a>对于connection</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看ip（类似于ifconfig、ip addr）</span></span><br><span class="line">nmcli</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建connection，配置静态ip（等同于配置ifcfg，其中BOOTPROTO=none，并ifup启动）</span></span><br><span class="line">nmcli c add <span class="built_in">type</span> ethernet con-name CNNCT1 ifname ethX ipv4.addr 192.168.1.100/24 ipv4.gateway 192.168.1.1 ipv4.method manual</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建connection，配置动态ip（等同于配置ifcfg，其中BOOTPROTO=dhcp，并ifup启动）</span></span><br><span class="line">nmcli c add <span class="built_in">type</span> ethernet con-name CNNCT1 ifname ethX ipv4.method auto</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改ip（非交互式）</span></span><br><span class="line">nmcli c modify CNNCT1 ipv4.addr <span class="string">&#x27;192.168.1.200/24&#x27;</span></span><br><span class="line">nmcli c up CNNCT1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改ip（交互式）</span></span><br><span class="line">nmcli c edit CNNCT1</span><br><span class="line">nmcli&gt; goto ipv4.addresses</span><br><span class="line">nmcli ipv4.addresses&gt; change</span><br><span class="line">Edit <span class="string">&#x27;addresses&#x27;</span> value: 192.168.1.200/24</span><br><span class="line">Do you also want to <span class="built_in">set</span> <span class="string">&#x27;ipv4.method&#x27;</span> to <span class="string">&#x27;manual&#x27;</span>? [<span class="built_in">yes</span>]: <span class="built_in">yes</span></span><br><span class="line">nmcli ipv4&gt; save</span><br><span class="line">nmcli ipv4&gt; activate</span><br><span class="line">nmcli ipv4&gt; quit</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启用connection（相当于ifup）</span></span><br><span class="line">nmcli c up CNNCT1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 停止connection（相当于ifdown）</span></span><br><span class="line">nmcli c down</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除connection（类似于ifdown并删除ifcfg）</span></span><br><span class="line">nmcli c delete CNNCT1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看connection列表</span></span><br><span class="line">nmcli c show</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看connection详细信息</span></span><br><span class="line">nmcli c show CNNCT1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重载所有ifcfg或route到connection（不会立即生效）</span></span><br><span class="line">nmcli c reload</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重载指定ifcfg或route到connection（即导入原来的系统配置，不会立即生效）</span></span><br><span class="line">nmcli c load /etc/sysconfig/network-scripts/ifcfg-eth0 //注意eth0是设备名(centos)</span><br><span class="line">nmcli c load /etc/sysconfig/network-scripts/route-eth0 //这个是配置的路由(centos)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 立即生效connection，有3种方法</span></span><br><span class="line">nmcli c up CNNCT1</span><br><span class="line">nmcli d reapply CNNCT1</span><br><span class="line">nmcli d connect CNNCT1</span><br></pre></td></tr></table></figure>
+
+<h3 id="对于device"><a href="#对于device" class="headerlink" title="对于device"></a>对于device</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看device列表</span></span><br><span class="line">nmcli d</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看所有device详细信息</span></span><br><span class="line">nmcli d show</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看指定device的详细信息</span></span><br><span class="line">nmcli d show eth0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 激活网卡</span></span><br><span class="line">nmcli d connect eth0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 关闭无线网络（NM默认启用无线网络）</span></span><br><span class="line">nmcli r all off</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看NM托管状态</span></span><br><span class="line">nmcli n</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开启NM托管</span></span><br><span class="line">nmcli n on</span><br><span class="line"></span><br><span class="line"><span class="comment"># 关闭NM托管（谨慎执行）</span></span><br><span class="line">nmcli n off</span><br><span class="line"></span><br><span class="line"><span class="comment"># 监听事件</span></span><br><span class="line">nmcli m</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看NM本身状态</span></span><br><span class="line">nmcli</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检测NM是否在线可用</span></span><br><span class="line">nm-online</span><br></pre></td></tr></table></figure>
+
+<h3 id="nmcli-device重点"><a href="#nmcli-device重点" class="headerlink" title="nmcli device重点"></a>nmcli device重点</h3><p><code>nmcli d connect eth0</code>：由NM对指定网卡进行管理，同时刷新该网卡对应的活跃connection（如果之前有修改过connection配置）；如果有connection但是都处于非活跃状态，则自动选择一个connection并将其活跃；如果没有connection，则自动生成一个并将其活跃。</p>
+<p><code>nmcli d disconnect eth0</code>：让NM断开指定网卡的连接，此操作不会变更实际网卡的link状态，只会使对应的connection变成非活跃。若重启系统则又会自动connect。另外，如果手工将该网卡的connection全部删掉，该网卡状态也会自动变为disconnected。</p>
+<p><code>nmcli d reapply eth0</code>：专门用于刷新connection，前提是网卡的device处于connected状态，否则会报错。</p>
+<p><code>nmcli d set eth0 autoconnect yes|no managed yes|no</code>：可以设置是否自动连接和是否自动管理，但经测试只能用于当前开机状态， 如果这2个参数都设置为no，然后重启系统，又会自动恢复成connected和managed yes的状态。所以该命令用途不大。注意事项：如果managed设置为no，那么<code>nmcli c reload</code>会读取配置文件，但是不会立即生效，接着如果执行<code>nmcli c up CNNT1</code>，就会立即生效，同时managed自动变为yes。</p>
+<h2 id="NM注意点"><a href="#NM注意点" class="headerlink" title="NM注意点"></a>NM注意点</h2><ol>
+<li>nmcli命令支持tab补全，但是需要<code>yum install bash-completion</code></li>
+<li>如果希望NM不要纳管网卡，只有一个办法最彻底最靠谱，就是自己写ifcfg，内容加上<code>NM_CONTROLLED=no</code>，这样该device的状态就会始终保持unmanaged。<code>nmcli c up、nmcli c reload、nmcil c load</code>都不会对其起任何作用。</li>
+<li>NM只能对link状态为up的网卡进行操作，如果手动<code>ip link set ethX down</code>，那么NM就无法对该网卡做任何操作（即使<code>nmcli d connect</code>也没有用）。</li>
+<li>可以通过<code>yum install network-scripts</code>来安装传统的network.service，不过redhat说了，在下一个rhel的大版本里将彻底废除，因此不建议使用network.service。</li>
+<li>手工创建新的ifcfg或者在ifcfg里修改ip等配置，NM不会自动读取，需要手工执行 <code>nmcli c reload</code>或者<code>nmcli c load/etc/sysconfig/network-scripts/ifcfg-ethX</code>。这一点可能和其他系统的NM行为不太一样，但这种做法实则更适合服务器。</li>
+<li>不手工配置ifcfg，使用默认的dhcp情况下，网卡的增减是不会自动生成ifcfg，此时<code>nmcli c</code>看到的con-name将类似’System ethX’或者’Wired connection 1’。</li>
+<li>NetworkManager支持3种获取dhcp的方式：dhclient、dhcpcd、internal，当<code>/etc/NetworkManager/NetworkManager.conf</code>配置文件中的[main]部分没配置 <code>dhcp=</code>时候，默认使用internal（rhel7&#x2F;centos7默认是dhclient）。internal是NM内部实现的dhcp客户端。</li>
+<li>关于手动指定网关ip的方法，经过实测，<code>/etc/sysconfig/network-scrpts/</code>中的GATEWAY仅在3种情况下有效： <code>NM_CONTROLLED=no</code>或<code>ipv4.method manual</code>或从<code>ipv4.method manual</code>第一次转到<code>ipv4.methodauto</code>时候。建议：当<code>NM_CONTROLLED=no</code>时，将网关写在<code>/etc/sysconfig/network</code>（GATEWAY）；当使用NM时候，使用<code>nmcli c</code>命令配置网关（比如 <code>nmcli c modify ethX ipv4.gateway 192.168.1.1</code>）。</li>
+<li>NM默认会从dhcp里获取dns信息，并修改<code>/etc/resolv.conf</code>，如果不想让NM管理<code>/etc/resolv.conf</code>，则只需在<code>/etc/NetworkManager/NetworkManager.conf</code>里的[main]里增加<code>dns=none</code>即可。</li>
+<li>如果想让NM不要自动管理新网卡（比如不要给新网卡获取ip地址），则只需在<code>/etc/NetworkManager/NetworkManager.conf</code>里的[main]里增加<code>no-auto-default=*</code>即可，改完后通过<code>systemctl restart NetworkManager</code>或者重启系统来生效。</li>
+<li>除了手工在NetworkManager.conf里加配置，也可以<code>yum install NetworkManager-config-server</code>，这会生成<code>/usr/lib/NetworkManager/conf.d/00-server.conf</code>。建议使用前者方案，因为后者的<code>ingore-carrier</code>是不被推荐的参数。</li>
+<li>更多NetworkManager参数详见<code>man NetworkManager.conf</code>。</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://www.m0ch.org">m0ch</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://www.m0ch.org/2022/05/19/Network/linux_set_ip/">https://www.m0ch.org/2022/05/19/Network/linux_set_ip/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://www.m0ch.org" target="_blank">m0ch</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Linux/">Linux</a><a class="post-meta__tags" href="/tags/IP%E9%85%8D%E7%BD%AE/">IP配置</a></div><div class="post-share"><div class="social-share" data-image="/localimage/random/top21.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/localimage/config/wechat.png" target="_blank"><img class="post-qr-code-img" src= "/localimage/config/loading.gif" data-lazy-src="/localimage/config/wechat.png" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/localimage/config/alipay.jpg" target="_blank"><img class="post-qr-code-img" src= "/localimage/config/loading.gif" data-lazy-src="/localimage/config/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2022/01/14/Tools/paramiko/" title="使用paramiko进行自动化ssh/sftp"><img class="cover" src= "/localimage/config/loading.gif" data-lazy-src="/localimage/random/top22.jpg" onerror="onerror=null;src='/localimage/config/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">使用paramiko进行自动化ssh/sftp</div></div><div class="info-2"><div class="info-item-1">安装1pip install...</div></div></div></a><a class="pagination-related" href="/2022/05/27/Tools/proxy/" title="各类转发软件"><img class="cover" src= "/localimage/config/loading.gif" data-lazy-src="/localimage/random/top23.jpg" onerror="onerror=null;src='/localimage/config/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">各类转发软件</div></div><div class="info-2"><div class="info-item-1">SSH隧道加密转发技术之一，优点在于有ssh就能用 本地转发 1ssh -L local_port:target_ip:target_port remote_server -N # -N参数表示不启动远端shell  远程转发 1ssh -R remote_port:target_ip:target_port remote_server -N #...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2023/10/17/Tools/lvm_fix/" title="Linux LVM分区信息恢复"><img class="cover" src= "/localimage/config/loading.gif" data-lazy-src="/localimage/random/top23.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-17</div><div class="info-item-2">Linux LVM分区信息恢复</div></div><div class="info-2"><div class="info-item-1">...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="waline-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src= "/localimage/config/loading.gif" data-lazy-src="/localimage/config/avatar.png" onerror="this.onerror=null;this.src='/localimage/config/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">m0ch</div><div class="author-info-description">Simple is best.</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">21</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">31</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">11</div></a></div><a id="card-info-btn" href="mailto:w@m0ch.org"><i class="fas fa-at"></i><span>Mail</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/m0ch3" target="_blank" title="Github"><i class="fa-brands fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:w@m0ch.org" target="_blank" title="Email"><i class="fa-solid fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">随缘写，随心记。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#network-service-RHEL%E7%B3%BB"><span class="toc-number">1.</span> <span class="toc-text">network.service(RHEL系)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">1.1.</span> <span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E"><span class="toc-number">1.2.</span> <span class="toc-text">配置参数说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E7%94%9F%E6%95%88"><span class="toc-number">1.3.</span> <span class="toc-text">配置生效</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#network-service-Debian"><span class="toc-number">2.</span> <span class="toc-text">network.service(Debian)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%8F%8A%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E"><span class="toc-number">2.1.</span> <span class="toc-text">配置文件及参数说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E7%94%9F%E6%95%88-1"><span class="toc-number">2.2.</span> <span class="toc-text">配置生效</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#netplan-Ubuntu"><span class="toc-number">3.</span> <span class="toc-text">netplan(Ubuntu)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6-1"><span class="toc-number">3.1.</span> <span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E"><span class="toc-number">3.2.</span> <span class="toc-text">配置说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E7%94%9F%E6%95%88-2"><span class="toc-number">3.3.</span> <span class="toc-text">配置生效</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NetworkManager"><span class="toc-number">4.</span> <span class="toc-text">NetworkManager</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-number">4.1.</span> <span class="toc-text">使用方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nmcli%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E4%B8%80%E8%A7%88"><span class="toc-number">4.2.</span> <span class="toc-text">nmcli常用命令一览</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8Econnection"><span class="toc-number">4.2.1.</span> <span class="toc-text">对于connection</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8Edevice"><span class="toc-number">4.2.2.</span> <span class="toc-text">对于device</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nmcli-device%E9%87%8D%E7%82%B9"><span class="toc-number">4.2.3.</span> <span class="toc-text">nmcli device重点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NM%E6%B3%A8%E6%84%8F%E7%82%B9"><span class="toc-number">4.3.</span> <span class="toc-text">NM注意点</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/06/19/Network/dhcp/" title="使用dnsmasq部署DHCPv4服务"><img src= "/localimage/config/loading.gif" data-lazy-src="/localimage/random/top7.jpg" onerror="this.onerror=null;this.src='/localimage/config/404.jpg'" alt="使用dnsmasq部署DHCPv4服务"/></a><div class="content"><a class="title" href="/2024/06/19/Network/dhcp/" title="使用dnsmasq部署DHCPv4服务">使用dnsmasq部署DHCPv4服务</a><time datetime="2024-06-19T07:53:56.000Z" title="发表于 2024-06-19 15:53:56">2024-06-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/06/06/Tools/autostart/" title="Windows/Linux开机自启服务配置"><img src= "/localimage/config/loading.gif" data-lazy-src="/localimage/random/top9.jpg" onerror="this.onerror=null;this.src='/localimage/config/404.jpg'" alt="Windows/Linux开机自启服务配置"/></a><div class="content"><a class="title" href="/2024/06/06/Tools/autostart/" title="Windows/Linux开机自启服务配置">Windows/Linux开机自启服务配置</a><time datetime="2024-06-06T13:47:40.000Z" title="发表于 2024-06-06 21:47:40">2024-06-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/10/17/Tools/lvm_fix/" title="Linux LVM分区信息恢复"><img src= "/localimage/config/loading.gif" data-lazy-src="/localimage/random/top23.jpg" onerror="this.onerror=null;this.src='/localimage/config/404.jpg'" alt="Linux LVM分区信息恢复"/></a><div class="content"><a class="title" href="/2023/10/17/Tools/lvm_fix/" title="Linux LVM分区信息恢复">Linux LVM分区信息恢复</a><time datetime="2023-10-17T03:14:34.000Z" title="发表于 2023-10-17 11:14:34">2023-10-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/10/17/Tools/vmimage/" title="各类虚拟镜像转换"><img src= "/localimage/config/loading.gif" data-lazy-src="/localimage/random/top15.jpg" onerror="this.onerror=null;this.src='/localimage/config/404.jpg'" alt="各类虚拟镜像转换"/></a><div class="content"><a class="title" href="/2023/10/17/Tools/vmimage/" title="各类虚拟镜像转换">各类虚拟镜像转换</a><time datetime="2023-10-17T03:12:34.000Z" title="发表于 2023-10-17 11:12:34">2023-10-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/06/07/Network/router/" title="自定义简易DHCPv6-PD路由"><img src= "/localimage/config/loading.gif" data-lazy-src="/localimage/random/top16.jpg" onerror="this.onerror=null;this.src='/localimage/config/404.jpg'" alt="自定义简易DHCPv6-PD路由"/></a><div class="content"><a class="title" href="/2023/06/07/Network/router/" title="自定义简易DHCPv6-PD路由">自定义简易DHCPv6-PD路由</a><time datetime="2023-06-07T01:15:03.000Z" title="发表于 2023-06-07 09:15:03">2023-06-07</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/localimage/random/top21.jpg);"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By m0ch</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="/pluginsSrc/medium-zoom/dist/medium-zoom.min.js"></script><script src="/pluginsSrc/vanilla-lazyload/dist/lazyload.iife.min.js"></script><div class="js-pjax"><script>(() => {
+  let initFn = window.walineFn || null
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"emoji":["//gcore.jsdelivr.net/gh/walinejs/emojis/alus","//gcore.jsdelivr.net/gh/walinejs/emojis/tieba","//gcore.jsdelivr.net/gh/walinejs/emojis/weibo"],"requiredMeta":["nick","mail"],"login":"force","search":false,"reaction":false}
+
+  const destroyWaline = ele => ele.destroy()
+
+  const initWaline = (Fn, el = document, path = window.location.pathname) => {
+    const waline = Fn({
+      el: el.querySelector('#waline-wrap'),
+      serverURL: 'https://comment.m0ch.org',
+      pageview: false,
+      dark: 'html[data-theme="dark"]',
+      comment: false,
+      ...option,
+      path: isShuoshuo ? path : (option && option.path) || path
+    })
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyWaline = () => {
+        destroyWaline(waline)
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const loadWaline = (el, path) => {
+    if (initFn) initWaline(initFn, el, path)
+    else {
+      btf.getCSS('/pluginsSrc/@waline/client/dist/waline.css')
+        .then(() => import('/pluginsSrc/@waline/client/dist/waline.js'))
+        .then(({ init }) => {
+          initFn = init || Waline.init
+          initWaline(initFn, el, path)
+          window.walineFn = initFn
+        })
+    }
+  }
+
+  if (isShuoshuo) {
+    'Waline' === 'Waline'
+      ? window.shuoshuoComment = { loadComment: loadWaline } 
+      : window.loadOtherComment = loadWaline
+    return
+  }
+
+  if ('Waline' === 'Waline' || !true) {
+    if (true) btf.loadComment(document.getElementById('waline-wrap'),loadWaline)
+    else setTimeout(loadWaline, 0)
+  } else {
+    window.loadOtherComment = loadWaline
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

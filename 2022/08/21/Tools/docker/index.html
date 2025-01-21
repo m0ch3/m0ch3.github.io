@@ -1,0 +1,365 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>docker学习笔记 | m0ch</title><meta name="author" content="m0ch"><meta name="copyright" content="m0ch"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="ffffff"><meta name="description" content="Docker — 从入门到实践 资料参考:  docker-practice项目 Gitbook:yeasy&#x2F;docker_practice Github:yeasy&#x2F;docker_practice  安装dockerapt安装添加GPG密钥： 1234# 阿里云源curl -fsSL https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;docker-ce&#x2F;linux&#x2F;ubu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker学习笔记">
+<meta property="og:url" content="https://www.m0ch.org/2022/08/21/Tools/docker/index.html">
+<meta property="og:site_name" content="m0ch">
+<meta property="og:description" content="Docker — 从入门到实践 资料参考:  docker-practice项目 Gitbook:yeasy&#x2F;docker_practice Github:yeasy&#x2F;docker_practice  安装dockerapt安装添加GPG密钥： 1234# 阿里云源curl -fsSL https:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;docker-ce&#x2F;linux&#x2F;ubu">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.m0ch.org/localimage/random/top9.jpg">
+<meta property="article:published_time" content="2022-08-21T09:26:44.000Z">
+<meta property="article:modified_time" content="2022-08-21T09:26:44.000Z">
+<meta property="article:author" content="m0ch">
+<meta property="article:tag" content="docker">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.m0ch.org/localimage/random/top9.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "docker学习笔记",
+  "url": "https://www.m0ch.org/2022/08/21/Tools/docker/",
+  "image": "https://www.m0ch.org/localimage/random/top9.jpg",
+  "datePublished": "2022-08-21T09:26:44.000Z",
+  "dateModified": "2022-08-21T09:26:44.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "m0ch",
+      "url": "https://www.m0ch.org/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/localimage/config/favicon.ico"><link rel="canonical" href="https://www.m0ch.org/2022/08/21/Tools/docker/index.html"><link rel="preconnect"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const hour = new Date().getHours()
+          const isNight = hour <= 6 || hour >= 18
+          if (theme === undefined) isNight ? activateDarkMode() : activateLightMode()
+          else theme === 'light' ? activateLightMode() : activateDarkMode()
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'medium_zoom',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: '/pluginsSrc/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: true,
+  islazyloadPlugin: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'docker学习笔记',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="web_bg" style="background-image: url(/localimage/config/background.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src= "/localimage/config/loading.gif" data-lazy-src="/localimage/config/avatar.png" onerror="this.onerror=null;this.src='/localimage/config/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">21</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">31</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">11</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/nav/"><i class="fa-fw fas fa-compass"></i><span> 导航</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 更多</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movie/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li><li><a class="site-page child" href="/ai/"><i class="fa-fw fas fa-robot"></i><span> 人工智能</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-address-card"></i><span> 关于</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/localimage/random/top9.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">m0ch</span></a><a class="nav-page-title" href="/"><span class="site-name">docker学习笔记</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/nav/"><i class="fa-fw fas fa-compass"></i><span> 导航</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> 更多</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movie/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li><li><a class="site-page child" href="/ai/"><i class="fa-fw fas fa-robot"></i><span> 人工智能</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-address-card"></i><span> 关于</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">docker学习笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-08-21T09:26:44.000Z" title="发表于 2022-08-21 17:26:44">2022-08-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-08-21T09:26:44.000Z" title="更新于 2022-08-21 17:26:44">2022-08-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Tools/">Tools</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">5.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>17分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="Docker-—-从入门到实践"><a href="#Docker-—-从入门到实践" class="headerlink" title="Docker — 从入门到实践"></a>Docker — 从入门到实践</h1><blockquote>
+<p>资料参考: </p>
+<p><a target="_blank" rel="noopener" href="https://vuepress.mirror.docker-practice.com/">docker-practice项目</a></p>
+<p><a target="_blank" rel="noopener" href="https://yeasy.gitbook.io/docker_practice">Gitbook:yeasy&#x2F;docker_practice</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/yeasy/docker_practice">Github:yeasy&#x2F;docker_practice</a></p>
+</blockquote>
+<h1 id="安装docker"><a href="#安装docker" class="headerlink" title="安装docker"></a>安装docker</h1><h2 id="apt安装"><a href="#apt安装" class="headerlink" title="apt安装"></a>apt安装</h2><p>添加GPG密钥：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 阿里云源</span></span><br><span class="line">curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | <span class="built_in">sudo</span> gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg</span><br><span class="line"><span class="comment"># 官方源</span></span><br><span class="line"><span class="comment"># curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg</span></span><br></pre></td></tr></table></figure>
+
+<p>向<code>sources.list</code>中添加Docker软件源：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 阿里云源</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://mirrors.aliyun.com/docker-ce/linux/ubuntu <span class="subst">$(lsb_release -cs)</span> stable&quot;</span> | <span class="built_in">sudo</span> <span class="built_in">tee</span> /etc/apt/sources.list.d/docker.list &gt; /dev/null</span><br><span class="line"><span class="comment"># 官方源</span></span><br><span class="line"><span class="comment"># echo &quot;deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable&quot; | sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>以上命令会添加稳定版本的Docker APT镜像源，如果需要测试版本的Docker请将stable改为test。</p>
+</blockquote>
+<p>安装<code>docker-ce</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt update</span><br><span class="line"><span class="built_in">sudo</span> apt install docker-ce</span><br></pre></td></tr></table></figure>
+
+<p>安装<code>docker-compose</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install docker-compose docker-compose-plugin</span><br></pre></td></tr></table></figure>
+
+<p>启动docker：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> docker</span><br><span class="line">systemctl start docker</span><br></pre></td></tr></table></figure>
+
+<h1 id="镜像"><a href="#镜像" class="headerlink" title="镜像"></a>镜像</h1><h2 id="获取镜像"><a href="#获取镜像" class="headerlink" title="获取镜像"></a>获取镜像</h2><p>从docker仓库拉取：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull [选项] [Docker Registry 地址[:端口号]/]仓库名[:标签]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>地址[:端口号]：地址的格式一般是<code>&lt;域名/IP&gt;[:端口号]</code>。默认地址是Docker Hub(<code>docker.io</code>)。</li>
+<li>仓库名：如之前所说，这里的仓库名是两段式名称，即<code>&lt;用户名&gt;/&lt;软件名&gt;</code>。对于Docker Hub，如果不给出用户名，则默认为<code>library</code>，也就是官方镜像。</li>
+<li>标签：如果未设置标签则默认为<code>latest</code>。</li>
+</ul>
+<p>例如<code>docker pull ubuntu:18.04</code>完整形式为<code>docker pull docker.io/library/ubuntu:18.04</code></p>
+<h2 id="列出镜像"><a href="#列出镜像" class="headerlink" title="列出镜像"></a>列出镜像</h2><h3 id="列出镜像-1"><a href="#列出镜像-1" class="headerlink" title="列出镜像"></a>列出镜像</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker image <span class="built_in">ls</span></span><br></pre></td></tr></table></figure>
+
+<p><code>docker image ls</code>展示的<code>size</code>并不是物理占用的size，因为docker使用了<code>Union FS</code>，镜像是分层构建的，不同镜像可能使用相同层。要展示物理磁盘占用，使用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker system <span class="built_in">df</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="虚悬镜像"><a href="#虚悬镜像" class="headerlink" title="虚悬镜像"></a>虚悬镜像</h3><p><code>ls</code>展现的镜像列表中，有时会有特殊的镜像，这个镜像既没有仓库名，也没有标签，均为 <none>，这个镜像原本是有镜像名和标签的，例如原来为<code>mongo:3.2</code>，随着官方镜像维护，发布了新版本后，重新<code>docker pull mongo:3.2</code>时，<code>mongo:3.2</code>这个镜像名被转移到了新下载的镜像身上，而旧的镜像上的这个名称则被取消，从而成为了<code>&lt;none&gt;</code>。除了<code>docker pull</code>可能导致这种情况，<code>docker build</code>也同样可以导致这种现象。由于新旧镜像同名，旧镜像名称被取消，从而出现仓库名、标签均为<code>&lt;none&gt;</code>的镜像。这类无标签镜像也被称为<strong>虚悬镜像(dangling image)</strong>，可以用下面的命令专门显示这类镜像：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker image <span class="built_in">ls</span> -f dangling=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>一般来说，虚悬镜像已经失去了存在的价值，是可以随意删除的，可以用下面的命令一次性删除：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker image prune</span><br></pre></td></tr></table></figure>
+
+<h3 id="中间层镜像"><a href="#中间层镜像" class="headerlink" title="中间层镜像"></a>中间层镜像</h3><p>为了加速镜像构建、重复利用资源，Docker会利用<strong>中间层镜像</strong>。所以在使用一段时间后，可能会看到一些依赖的中间层镜像。默认的<code>docker image ls</code>列表中只会显示顶层镜像，如果希望显示包括中间层镜像在内的所有镜像的话，需要加<code>-a</code>参数：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker image <span class="built_in">ls</span> -a</span><br></pre></td></tr></table></figure>
+<p>这样会看到很多无标签的镜像，与之前的虚悬镜像不同，这些无标签的镜像很多都是中间层镜像，是其它镜像所依赖的镜像。这些无标签镜像不应该删除，否则会导致上层镜像因为依赖丢失而出错。实际上，这些镜像也没必要删除，相同的层只会存一遍，而这些镜像是别的镜像的依赖，因此并不会因为它们被列出来而多存了一份，无论如何你也会需要它们。只要删除那些依赖它们的镜像后，这些依赖的中间层镜像也会被连带删除。</p>
+<h3 id="列出部分镜像"><a href="#列出部分镜像" class="headerlink" title="列出部分镜像"></a>列出部分镜像</h3><p>不加任何参数的情况下，<code>docker image ls</code>会列出所有顶层镜像，但是有时候我们只希望列出部分镜像。<code>docker image ls</code>有好几个参数可以帮助做到这个事情。</p>
+<p>根据仓库名列出镜像：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker image <span class="built_in">ls</span> ubuntu</span><br></pre></td></tr></table></figure>
+
+<p>列出特定的某个镜像，也就是说指定仓库名和标签：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker image <span class="built_in">ls</span> ubuntu:18.04</span><br></pre></td></tr></table></figure>
+
+<p>除此以外，<code>docker image ls</code>还支持强大的过滤器参数<code>--filter</code>，简写<code>-f</code>。之前我们已经看到了使用过滤器来列出虚悬镜像的用法，它还有更多的用法。比如，我们希望看到在<code>mongo:3.2</code>之后建立的镜像，可以用下面的命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker image <span class="built_in">ls</span> --filter since=mongo:3.2</span><br></pre></td></tr></table></figure>
+
+<p>想查看某个位置之前的镜像也可以，只需要把<code>since</code>换成<code>before</code>即可。</p>
+<p>此外，如果镜像构建时，定义了<code>LABEL</code>，还可以通过<code>LABEL</code>来过滤：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker image <span class="built_in">ls</span> --filter label=com.example.version=0.1</span><br></pre></td></tr></table></figure>
+
+<h3 id="以特定格式显示"><a href="#以特定格式显示" class="headerlink" title="以特定格式显示"></a>以特定格式显示</h3><p>只列出镜像ID：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker image <span class="built_in">ls</span> -q</span><br></pre></td></tr></table></figure>
+
+<p>另外一些时候，我们可能只是对表格的结构不满意，希望自己组织列；或者不希望有标题，这样方便其它程序解析结果等，这就用到了Go的模板语法。</p>
+<p>比如，下面的命令会直接列出镜像结果，并且只包含镜像ID和仓库名：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker image <span class="built_in">ls</span> --format <span class="string">&quot;&#123;&#123;.ID&#125;&#125;: &#123;&#123;.Repository&#125;&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>或者打算以表格等距显示，并且有标题行，和默认一样，不过自己定义列：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker image <span class="built_in">ls</span> --format <span class="string">&quot;table &#123;&#123;.ID&#125;&#125;\t&#123;&#123;.Repository&#125;&#125;\t&#123;&#123;.Tag&#125;&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="删除本地镜像"><a href="#删除本地镜像" class="headerlink" title="删除本地镜像"></a>删除本地镜像</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker image <span class="built_in">rm</span> [选项] &lt;镜像1&gt; [&lt;镜像2&gt; ...]</span><br></pre></td></tr></table></figure>
+
+<h3 id="用ID、镜像名、摘要删除镜像"><a href="#用ID、镜像名、摘要删除镜像" class="headerlink" title="用ID、镜像名、摘要删除镜像"></a>用ID、镜像名、摘要删除镜像</h3><p>其中，<code>&lt;镜像&gt;</code>可以是<code>镜像短ID</code>、<code>镜像长ID</code>、<code>镜像名</code>或者<code>镜像摘要</code>。</p>
+<p>我们可以用镜像的完整ID，也称为长ID来删除镜像。使用脚本的时候可能会用长ID，但是人工输入就太累了，所以更多的时候是用短ID来删除镜像。<code>docker image ls</code>默认列出的就已经是短ID了，一般取前3个字符以上，只要足够区分于别的镜像就可以了。</p>
+<p>我们也可以用镜像名，也就是 <code>&lt;仓库名&gt;:&lt;标签&gt;</code>，来删除镜像。</p>
+<p>当然，更精确的是使用<code>镜像摘要</code>删除镜像：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker image <span class="built_in">ls</span> --digests</span><br><span class="line">docker image <span class="built_in">rm</span> &lt;镜像名&gt;@&lt;DIGEST值&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Untagged和Deleted"><a href="#Untagged和Deleted" class="headerlink" title="Untagged和Deleted"></a>Untagged和Deleted</h3><p>删除行为分为两类，一类是<code>Untagged</code>，另一类是<code>Deleted</code>。<strong>镜像的唯一标识是其ID和摘要，而一个镜像可以有多个标签</strong>。</p>
+<p>因此当我们使用上面命令删除镜像的时候，实际上是在要求删除某个标签的镜像。所以首先需要做的是将满足我们要求的所有镜像标签都取消，这就是我们看到的<code>Untagged</code>的信息。因为一个镜像可以对应多个标签，因此当我们删除了所指定的标签后，可能还有别的标签指向了这个镜像，如果是这种情况，那么<code>Delete</code>行为就不会发生。所以并非所有的<code>docker image rm</code>都会产生删除镜像的行为，有可能仅仅是取消了某个标签而已。</p>
+<p>当该镜像所有的标签都被取消了，该镜像很可能会失去了存在的意义，因此会触发删除行为。镜像是多层存储结构，因此在删除的时候也是从上层向基础层方向依次进行判断删除。镜像的多层结构让镜像复用变得非常容易，因此很有可能某个其它镜像正依赖于当前镜像的某一层。这种情况，依旧不会触发删除该层的行为。直到没有任何层依赖当前层时，才会真实的删除当前层。这就是为什么，有时候会奇怪，为什么明明没有别的标签指向这个镜像，但是它还是存在的原因，也是为什么有时候会发现所删除的层数和自己<code>docker pull</code>时候看到的层数不一样的原因。</p>
+<p>除了镜像依赖以外，还需要注意的是容器对镜像的依赖。如果有用这个镜像启动的容器存在（即使容器没有运行），那么同样不可以删除这个镜像。之前讲过，容器是以镜像为基础，再加一层容器存储层，组成这样的多层存储结构去运行的。因此该镜像如果被这个容器所依赖的，那么删除必然会导致故障。如果这些容器是不需要的，应该先将它们删除，然后再来删除镜像。</p>
+<h3 id="命令配合"><a href="#命令配合" class="headerlink" title="命令配合"></a>命令配合</h3><p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除镜像名为redis的所有镜像</span></span><br><span class="line">docker image <span class="built_in">rm</span> $(docker image <span class="built_in">ls</span> -q redis)</span><br><span class="line"><span class="comment"># 删除在mongo:3.2之前的镜像</span></span><br><span class="line">docker image <span class="built_in">rm</span> $(docker image <span class="built_in">ls</span> -q -f before=mongo:3.2)</span><br></pre></td></tr></table></figure>
+
+<h2 id="利用commit制作镜像（不推荐）"><a href="#利用commit制作镜像（不推荐）" class="headerlink" title="利用commit制作镜像（不推荐）"></a>利用commit制作镜像（不推荐）</h2><blockquote>
+<p>warning：<code>docker commit</code>命令除了学习之外，还有一些特殊的应用场合，比如被入侵后保存现场等。但是，不要使用<code>docker commit</code>定制镜像，定制镜像应该使用<code>Dockerfile</code>来完成。</p>
+</blockquote>
+<p>镜像是多层存储，每一层是在前一层的基础上进行的修改；而容器同样也是多层存储，是在以镜像为基础层，在其基础上加一层作为容器运行时的存储层。</p>
+<p>我们修改了容器的文件，也就是改动了容器的存储层。我们可以通过<code>docker diff</code>命令看到具体的改动。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker diff &lt;容器名&gt;</span><br></pre></td></tr></table></figure>
+
+<p>当我们运行一个容器的时候（如果不使用卷的话），我们做的任何文件修改都会被记录于容器存储层里。而Docker提供了一个<code>docker commit</code>命令，可以将容器的存储层保存下来成为镜像。换句话说，就是在原有镜像的基础上，再叠加上容器的存储层，并构成新的镜像。以后我们运行这个新镜像的时候，就会拥有原有容器最后的文件变化。</p>
+<p><code>docker commit</code>的语法格式为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker commit [选项] &lt;容器ID或容器名&gt; [&lt;仓库名&gt;[:&lt;标签&gt;]]</span><br></pre></td></tr></table></figure>
+
+<p>可选选项<code>--author</code>是指定修改的作者，<code>--message</code>则是记录本次修改的内容。</p>
+<p>我们还可以用<code>docker history</code>具体查看镜像内的历史记录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker <span class="built_in">history</span> &lt;容器名&gt;</span><br></pre></td></tr></table></figure>
+
+<p>慎用<code>docker commit</code>:</p>
+<p>使用<code>docker commit</code>命令虽然可以比较直观的帮助理解镜像分层存储的概念，但是实际环境中并不会这样使用。使用<code>docker commit</code>意味着所有对镜像的操作都是黑箱操作，生成的镜像也被称为<strong>黑箱镜像</strong>，换句话说，就是除了制作镜像的人知道执行过什么命令、怎么生成的镜像，别人根本无从得知。而且，即使是这个制作镜像的人，过一段时间后也无法记清具体的操作。这种黑箱镜像的维护工作是非常痛苦的。</p>
+<p>而且，回顾之前提及的镜像所使用的分层存储的概念，除当前层外，之前的每一层都是不会发生改变的，换句话说，任何修改的结果仅仅是在当前层进行标记、添加、修改，而不会改动上一层。如果使用<code>docker commit</code>制作镜像，以及后期修改的话，每一次修改都会让镜像更加臃肿一次，所删除的上一层的东西并不会丢失，会一直如影随形的跟着这个镜像，即使根本无法访问到。这会让镜像更加臃肿。</p>
+<h2 id="从rootfs压缩包导入镜像"><a href="#从rootfs压缩包导入镜像" class="headerlink" title="从rootfs压缩包导入镜像"></a>从rootfs压缩包导入镜像</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker import [选项] &lt;文件&gt;|&lt;URL&gt;|- [&lt;仓库名&gt;[:&lt;标签&gt;]]</span><br></pre></td></tr></table></figure>
+<p>压缩包可以是本地文件、远程Web文件，甚至是从标准输入中得到。压缩包将会在镜像&#x2F;目录展开，并直接作为镜像第一层提交。</p>
+<h2 id="导入和导出镜像"><a href="#导入和导出镜像" class="headerlink" title="导入和导出镜像"></a>导入和导出镜像</h2><p>Docker还提供了<code>docker save</code>和<code>docker load</code>命令，用以将镜像保存为一个文件，然后传输到另一个位置上，再加载进来。这是在没有<code>Docker Registry</code>时的做法，现在已经不推荐，镜像迁移应该直接使用<code>Docker Registry</code>，无论是直接使用<code>Docker Hub</code>还是使用内网私有<code>Registry</code>都可以。</p>
+<p>导出：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker save &lt;镜像名&gt; -o filename.tar <span class="comment">#镜像打包导出，未压缩</span></span><br><span class="line">docker save &lt;镜像名&gt; | gzip &gt; filename.tar.gz <span class="comment">#配合gzip进行压缩</span></span><br></pre></td></tr></table></figure>
+
+<p>导入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker load -i filename.tar.gz</span><br></pre></td></tr></table></figure>
+
+<p>如果我们结合这两个命令以及<code>ssh</code>甚至<code>pv</code>的话，利用Linux强大的管道，我们可以写一个命令完成从一个机器将镜像迁移到另一个机器，并且带进度条的功能：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker save &lt;镜像名&gt; | bzip2 | pv | ssh &lt;用户名&gt;@&lt;主机名&gt; <span class="string">&#x27;cat | docker load&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Dockerfile构建镜像"><a href="#Dockerfile构建镜像" class="headerlink" title="Dockerfile构建镜像"></a>Dockerfile构建镜像</h2><p>镜像的定制实际上就是定制每一层所添加的配置、文件。如果我们可以把每一层修改、安装、构建、操作的命令都写入一个脚本，用这个脚本来构建、定制镜像，那么之前提及的无法重复的问题、镜像构建透明性的问题、体积的问题就都会解决。这个脚本就是<code>Dockerfile</code>。</p>
+<p><code>Dockerfile</code>是一个文本文件，其内包含了一条条的<strong>指令(Instruction)</strong>，每一条指令构建一层，因此每一条指令的内容，就是描述该层应当如何构建。</p>
+<h3 id="FROM指定基础镜像"><a href="#FROM指定基础镜像" class="headerlink" title="FROM指定基础镜像"></a>FROM指定基础镜像</h3><p>所谓定制镜像，那一定是以一个镜像为基础，在其上进行定制。基础镜像是必须指定的。而<code>FROM</code>就是指定基础镜像，因此一个<code>Dockerfile</code>中<code>FROM</code>是必备的指令，并且必须是第一条指令。</p>
+<p>在<code>Docker Hub</code>上有非常多的高质量的官方镜像，有可以直接拿来使用的服务类的镜像；也有一些方便开发、构建、运行各种语言应用的镜像。可以在其中寻找一个最符合我们最终目标的镜像为基础镜像进行定制。如果没有找到对应服务的镜像，官方镜像中还提供了一些更为基础的操作系统镜像，这些操作系统的软件库为我们提供了更广阔的扩展空间。</p>
+<p>除了选择现有镜像为基础镜像外，Docker还存在一个特殊的镜像，名为<code>scratch</code>。这个镜像是虚拟的概念，并不实际存在，它表示一个空白的镜像。</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> scratch</span><br></pre></td></tr></table></figure>
+
+<p>如果你以<code>scratch</code>为基础镜像的话，意味着你不以任何镜像为基础，接下来所写的指令将作为镜像第一层开始存在。</p>
+<p>不以任何系统为基础，直接将可执行文件复制进镜像的做法并不罕见，对于Linux下静态编译的程序来说，并不需要有操作系统提供运行时支持，所需的一切库都已经在可执行文件里了，因此直接<code>FROM scratch</code>会让镜像体积更加小巧。使用Go语言开发的应用很多会使用这种方式来制作镜像，这也是为什么有人认为Go是特别适合容器微服务架构的语言的原因之一。</p>
+<h3 id="RUN执行命令"><a href="#RUN执行命令" class="headerlink" title="RUN执行命令"></a>RUN执行命令</h3><p>RUN 指令是用来执行命令行命令的。由于命令行的强大能力，RUN 指令在定制镜像时是最常用的指令之一。其格式有两种：</p>
+<ul>
+<li>shell格式：<code>RUN &lt;命令&gt;</code>，例如：<code>RUN echo &#39;&lt;h1&gt;Hello, Docker!&lt;/h1&gt;&#39; &gt; /usr/share/nginx/html/index.html</code></li>
+<li>exec格式：<code>RUN [&quot;可执行文件&quot;, &quot;参数1&quot;, &quot;参数2&quot;]</code>，这更像是函数调用中的格式</li>
+</ul>
+<p><code>Dockerfile</code>中每一个指令都会建立一层，<code>RUN</code>也不例外。每一个<code>RUN</code>的行为，就和刚才我们手工建立镜像的过程一样：新建立一层，在其上执行这些命令，执行结束后，<code>commit</code>这一层的修改，构成新的镜像。</p>
+<p>使用不必要的<code>RUN</code>构建多层是没有意义的，而且很多运行时不需要的东西，都被装进了镜像里，比如编译环境、更新的软件包等等。结果就是产生非常臃肿、非常多层的镜像，不仅仅增加了构建部署的时间，也很容易出错。而且，<code>Union FS</code>是有最大层数限制的，比如<code>AUFS</code>，曾经是最大不得超过42层，现在是不得超过127层。</p>
+<p>建议使用<code>&amp;&amp;</code>将可归并的语句连接在一起，执行必要的清理工作。并且，<code>Dockerfile</code>支持shell类似的<code>\</code>结尾续行，以及<code>#</code>开头的注释。</p>
+<h3 id="构建镜像"><a href="#构建镜像" class="headerlink" title="构建镜像"></a>构建镜像</h3><p>使用<code>docker build</code>命令进行镜像构建。其格式为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build [选项] &lt;上下文路径/URL/-&gt;</span><br></pre></td></tr></table></figure>
+
+<p>例如，在<code>Dockerfile</code>文件所在目录执行：<code>docker build -t nginx:v3 .</code>,从命令的输出结果中，我们可以清晰的看到镜像的构建过程。如同我们之前所说的那样，<code>RUN</code>指令启动了一个容器<code>9cdc27646c7b</code>，执行了所要求的命令，并最后提交了这一层<code>44aa4490ce2c</code>，随后删除了所用到的这个临时容器<code>9cdc27646c7b</code>。</p>
+<p>如果注意，会看到<code>docker build</code>命令最后有一个<code>.</code>。<code>.</code>表示当前目录，指定<code>上下文路径</code>。那么什么是上下文呢？</p>
+<p>首先我们要理解<code>docker build</code>的工作原理。Docker在运行时分为Docker引擎（也就是服务端守护进程）和客户端工具。Docker的引擎提供了一组REST API，被称为<code>Docker Remote API</code>，而如<code>docker</code>命令这样的客户端工具，则是通过这组API与Docker引擎交互，从而完成各种功能。因此，虽然表面上我们好像是在本机执行各种docker功能，但实际上，一切都是使用的远程调用形式在服务端（Docker引擎）完成。也因为这种C&#x2F;S设计，让我们操作远程服务器的Docker引擎变得轻而易举。</p>
+<p>当我们进行镜像构建的时候，并非所有定制都会通过<code>RUN</code>指令完成，经常会需要将一些本地文件复制进镜像，比如通过<code>COPY</code>指令、<code>ADD</code>指令等。而<code>docker build</code>命令构建镜像，其实并非在本地构建，而是在服务端，也就是Docker引擎中构建的。那么在这种C&#x2F;S的架构中，如何才能让服务端获得本地文件呢？</p>
+<p>这就引入了上下文的概念。当构建的时候，用户会指定构建镜像上下文的路径，<code>docker build</code>命令得知这个路径后，会将路径下的所有内容打包，然后上传给Docker引擎。这样 Docker引擎收到这个上下文包后，展开就会获得构建镜像所需的一切文件。</p>
+<p>如果在<code>Dockerfile</code>中这么写：<code>COPY ./package.json /app/</code>，这并不是要复制执行<code>docker build</code>命令所在的目录下的package.json，也不是复制Dockerfile所在目录下的package.json，而是复制<code>上下文（Context）</code>目录下的package.json。</p>
+<p>因此，<code>COPY</code>这类指令中的源文件的路径都是相对路径。这也是初学者经常会问的为什么<code>COPY ../package.json /app</code>或者<code>COPY /opt/xxxx /app</code>无法工作的原因，因为这些路径已经超出了上下文的范围，Docker引擎无法获得这些位置的文件。如果真的需要那些文件，应该将它们复制到上下文目录中去。</p>
+<p>如果观察 docker build 输出，我们其实已经看到了这个发送上下文的过程：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ docker build -t nginx:v3 .</span><br><span class="line">Sending build context to Docker daemon 2.048 kB</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>理解构建上下文对于镜像构建是很重要的，避免犯一些不应该的错误。比如有些初学者在发现<code>COPY /opt/xxxx /app</code>不工作后，于是干脆将<code>Dockerfile</code>放到了硬盘根目录去构建，结果发现<code>docker build</code>执行后，在发送一个几十GB的东西，极为缓慢而且很容易构建失败。那是因为这种做法是在让<code>docker build</code>打包整个硬盘，这显然是使用错误。一般来说，应该会将<code>Dockerfile</code>置于一个空目录下，或者项目根目录下。如果该目录下没有所需文件，那么应该把所需文件复制一份过来。如果目录下有些东西确实不希望构建时传给Docker引擎，那么可以用<code>.gitignore</code>一样的语法写一个<code>.dockerignore</code>，该文件是用于剔除不需要作为上下文传递给Docker引擎的。</p>
+<p>那么为什么会有人误以为<code>.</code>是指定<code>Dockerfile</code>所在目录呢？这是因为在默认情况下，如果不额外指定<code>Dockerfile</code>的话，会将上下文目录下的名为<code>Dockerfile</code>的文件作为 Dockerfile。<br>这只是默认行为，实际上<code>Dockerfile</code>的文件名并不要求必须为<code>Dockerfile</code>，而且并不要求必须位于上下文目录中，比如可以用<code>-f ../Dockerfile.php</code>参数指定某个文件作为<code>Dockerfile</code>。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://www.m0ch.org">m0ch</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://www.m0ch.org/2022/08/21/Tools/docker/">https://www.m0ch.org/2022/08/21/Tools/docker/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://www.m0ch.org" target="_blank">m0ch</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/docker/">docker</a></div><div class="post-share"><div class="social-share" data-image="/localimage/random/top9.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/localimage/config/wechat.png" target="_blank"><img class="post-qr-code-img" src= "/localimage/config/loading.gif" data-lazy-src="/localimage/config/wechat.png" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li><li class="reward-item"><a href="/localimage/config/alipay.jpg" target="_blank"><img class="post-qr-code-img" src= "/localimage/config/loading.gif" data-lazy-src="/localimage/config/alipay.jpg" alt="alipay"/></a><div class="post-qr-code-desc">alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2022/08/04/Tools/linux_config/" title="给Xfce/Gnome换上MacoOS WhiteSur主题"><img class="cover" src= "/localimage/config/loading.gif" data-lazy-src="/localimage/random/top18.jpg" onerror="onerror=null;src='/localimage/config/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">给Xfce/Gnome换上MacoOS WhiteSur主题</div></div><div class="info-2"><div class="info-item-1">初始化12apt update &amp;&amp; apt upgrade -yapt install fonts-wqy-microhei git -y 打开一次Firefox浏览器，初始化配置后关闭 下载主题123git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.gitgit clone...</div></div></div></a><a class="pagination-related" href="/2022/09/05/Network/ddns/" title="cloudflare-ddns脚本"><img class="cover" src= "/localimage/config/loading.gif" data-lazy-src="/localimage/random/top4.jpg" onerror="onerror=null;src='/localimage/config/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">cloudflare-ddns脚本</div></div><div class="info-2"><div class="info-item-1">Cloudflare-ddnsrequire: python -m pip install...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="waline-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src= "/localimage/config/loading.gif" data-lazy-src="/localimage/config/avatar.png" onerror="this.onerror=null;this.src='/localimage/config/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">m0ch</div><div class="author-info-description">Simple is best.</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">21</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">31</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">11</div></a></div><a id="card-info-btn" href="mailto:w@m0ch.org"><i class="fas fa-at"></i><span>Mail</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/m0ch3" target="_blank" title="Github"><i class="fa-brands fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:w@m0ch.org" target="_blank" title="Email"><i class="fa-solid fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">随缘写，随心记。</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Docker-%E2%80%94-%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.</span> <span class="toc-text">Docker — 从入门到实践</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%89%E8%A3%85docker"><span class="toc-number">2.</span> <span class="toc-text">安装docker</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#apt%E5%AE%89%E8%A3%85"><span class="toc-number">2.1.</span> <span class="toc-text">apt安装</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%95%9C%E5%83%8F"><span class="toc-number">3.</span> <span class="toc-text">镜像</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E9%95%9C%E5%83%8F"><span class="toc-number">3.1.</span> <span class="toc-text">获取镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%97%E5%87%BA%E9%95%9C%E5%83%8F"><span class="toc-number">3.2.</span> <span class="toc-text">列出镜像</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%97%E5%87%BA%E9%95%9C%E5%83%8F-1"><span class="toc-number">3.2.1.</span> <span class="toc-text">列出镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%99%9A%E6%82%AC%E9%95%9C%E5%83%8F"><span class="toc-number">3.2.2.</span> <span class="toc-text">虚悬镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%AD%E9%97%B4%E5%B1%82%E9%95%9C%E5%83%8F"><span class="toc-number">3.2.3.</span> <span class="toc-text">中间层镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%97%E5%87%BA%E9%83%A8%E5%88%86%E9%95%9C%E5%83%8F"><span class="toc-number">3.2.4.</span> <span class="toc-text">列出部分镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A5%E7%89%B9%E5%AE%9A%E6%A0%BC%E5%BC%8F%E6%98%BE%E7%A4%BA"><span class="toc-number">3.2.5.</span> <span class="toc-text">以特定格式显示</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E6%9C%AC%E5%9C%B0%E9%95%9C%E5%83%8F"><span class="toc-number">3.3.</span> <span class="toc-text">删除本地镜像</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8ID%E3%80%81%E9%95%9C%E5%83%8F%E5%90%8D%E3%80%81%E6%91%98%E8%A6%81%E5%88%A0%E9%99%A4%E9%95%9C%E5%83%8F"><span class="toc-number">3.3.1.</span> <span class="toc-text">用ID、镜像名、摘要删除镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Untagged%E5%92%8CDeleted"><span class="toc-number">3.3.2.</span> <span class="toc-text">Untagged和Deleted</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E9%85%8D%E5%90%88"><span class="toc-number">3.3.3.</span> <span class="toc-text">命令配合</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%94%A8commit%E5%88%B6%E4%BD%9C%E9%95%9C%E5%83%8F%EF%BC%88%E4%B8%8D%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="toc-number">3.4.</span> <span class="toc-text">利用commit制作镜像（不推荐）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8Erootfs%E5%8E%8B%E7%BC%A9%E5%8C%85%E5%AF%BC%E5%85%A5%E9%95%9C%E5%83%8F"><span class="toc-number">3.5.</span> <span class="toc-text">从rootfs压缩包导入镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%BC%E5%85%A5%E5%92%8C%E5%AF%BC%E5%87%BA%E9%95%9C%E5%83%8F"><span class="toc-number">3.6.</span> <span class="toc-text">导入和导出镜像</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dockerfile%E6%9E%84%E5%BB%BA%E9%95%9C%E5%83%8F"><span class="toc-number">3.7.</span> <span class="toc-text">Dockerfile构建镜像</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#FROM%E6%8C%87%E5%AE%9A%E5%9F%BA%E7%A1%80%E9%95%9C%E5%83%8F"><span class="toc-number">3.7.1.</span> <span class="toc-text">FROM指定基础镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RUN%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4"><span class="toc-number">3.7.2.</span> <span class="toc-text">RUN执行命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E9%95%9C%E5%83%8F"><span class="toc-number">3.7.3.</span> <span class="toc-text">构建镜像</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/06/19/Network/dhcp/" title="使用dnsmasq部署DHCPv4服务"><img src= "/localimage/config/loading.gif" data-lazy-src="/localimage/random/top7.jpg" onerror="this.onerror=null;this.src='/localimage/config/404.jpg'" alt="使用dnsmasq部署DHCPv4服务"/></a><div class="content"><a class="title" href="/2024/06/19/Network/dhcp/" title="使用dnsmasq部署DHCPv4服务">使用dnsmasq部署DHCPv4服务</a><time datetime="2024-06-19T07:53:56.000Z" title="发表于 2024-06-19 15:53:56">2024-06-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/06/06/Tools/autostart/" title="Windows/Linux开机自启服务配置"><img src= "/localimage/config/loading.gif" data-lazy-src="/localimage/random/top9.jpg" onerror="this.onerror=null;this.src='/localimage/config/404.jpg'" alt="Windows/Linux开机自启服务配置"/></a><div class="content"><a class="title" href="/2024/06/06/Tools/autostart/" title="Windows/Linux开机自启服务配置">Windows/Linux开机自启服务配置</a><time datetime="2024-06-06T13:47:40.000Z" title="发表于 2024-06-06 21:47:40">2024-06-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/10/17/Tools/lvm_fix/" title="Linux LVM分区信息恢复"><img src= "/localimage/config/loading.gif" data-lazy-src="/localimage/random/top23.jpg" onerror="this.onerror=null;this.src='/localimage/config/404.jpg'" alt="Linux LVM分区信息恢复"/></a><div class="content"><a class="title" href="/2023/10/17/Tools/lvm_fix/" title="Linux LVM分区信息恢复">Linux LVM分区信息恢复</a><time datetime="2023-10-17T03:14:34.000Z" title="发表于 2023-10-17 11:14:34">2023-10-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/10/17/Tools/vmimage/" title="各类虚拟镜像转换"><img src= "/localimage/config/loading.gif" data-lazy-src="/localimage/random/top15.jpg" onerror="this.onerror=null;this.src='/localimage/config/404.jpg'" alt="各类虚拟镜像转换"/></a><div class="content"><a class="title" href="/2023/10/17/Tools/vmimage/" title="各类虚拟镜像转换">各类虚拟镜像转换</a><time datetime="2023-10-17T03:12:34.000Z" title="发表于 2023-10-17 11:12:34">2023-10-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/06/07/Network/router/" title="自定义简易DHCPv6-PD路由"><img src= "/localimage/config/loading.gif" data-lazy-src="/localimage/random/top16.jpg" onerror="this.onerror=null;this.src='/localimage/config/404.jpg'" alt="自定义简易DHCPv6-PD路由"/></a><div class="content"><a class="title" href="/2023/06/07/Network/router/" title="自定义简易DHCPv6-PD路由">自定义简易DHCPv6-PD路由</a><time datetime="2023-06-07T01:15:03.000Z" title="发表于 2023-06-07 09:15:03">2023-06-07</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/localimage/random/top9.jpg);"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By m0ch</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="/pluginsSrc/medium-zoom/dist/medium-zoom.min.js"></script><script src="/pluginsSrc/vanilla-lazyload/dist/lazyload.iife.min.js"></script><div class="js-pjax"><script>(() => {
+  let initFn = window.walineFn || null
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = {"emoji":["//gcore.jsdelivr.net/gh/walinejs/emojis/alus","//gcore.jsdelivr.net/gh/walinejs/emojis/tieba","//gcore.jsdelivr.net/gh/walinejs/emojis/weibo"],"requiredMeta":["nick","mail"],"login":"force","search":false,"reaction":false}
+
+  const destroyWaline = ele => ele.destroy()
+
+  const initWaline = (Fn, el = document, path = window.location.pathname) => {
+    const waline = Fn({
+      el: el.querySelector('#waline-wrap'),
+      serverURL: 'https://comment.m0ch.org',
+      pageview: false,
+      dark: 'html[data-theme="dark"]',
+      comment: false,
+      ...option,
+      path: isShuoshuo ? path : (option && option.path) || path
+    })
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyWaline = () => {
+        destroyWaline(waline)
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const loadWaline = (el, path) => {
+    if (initFn) initWaline(initFn, el, path)
+    else {
+      btf.getCSS('/pluginsSrc/@waline/client/dist/waline.css')
+        .then(() => import('/pluginsSrc/@waline/client/dist/waline.js'))
+        .then(({ init }) => {
+          initFn = init || Waline.init
+          initWaline(initFn, el, path)
+          window.walineFn = initFn
+        })
+    }
+  }
+
+  if (isShuoshuo) {
+    'Waline' === 'Waline'
+      ? window.shuoshuoComment = { loadComment: loadWaline } 
+      : window.loadOtherComment = loadWaline
+    return
+  }
+
+  if ('Waline' === 'Waline' || !true) {
+    if (true) btf.loadComment(document.getElementById('waline-wrap'),loadWaline)
+    else setTimeout(loadWaline, 0)
+  } else {
+    window.loadOtherComment = loadWaline
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
