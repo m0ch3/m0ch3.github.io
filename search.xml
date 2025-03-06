@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>Ollama使用nginx辅助开启认证</title>
+      <link href="/2025/03/06/Tools/ollama/"/>
+      <url>/2025/03/06/Tools/ollama/</url>
+      
+        <content type="html"><![CDATA[<blockquote><p>Ollama使用nginx辅助开启简单认证，便于公网开放有限访问。固定KEY方式，不区分用户身份，使用时注意替换命令中<code>REPLACE_YOUR_API_KEY_HERE</code>字段</p></blockquote><h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装ollama</span></span><br><span class="line">curl -fsSL https://ollama.com/install.sh | sh</span><br><span class="line"><span class="comment"># 安装nginx</span></span><br><span class="line">apt upadte &amp;&amp; apt install nginx -y</span><br></pre></td></tr></table></figure><h1 id="配置nginx"><a href="#配置nginx" class="headerlink" title="配置nginx"></a>配置nginx</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt; /etc/nginx/sites-enabled/ollama &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">server &#123;</span></span><br><span class="line"><span class="string">    listen 80;  # 或者 443 如果你使用 HTTPS</span></span><br><span class="line"><span class="string">    server_name _; # 或者你的服务器IP</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    location / &#123;</span></span><br><span class="line"><span class="string">        # Ollama API 的反向代理设置</span></span><br><span class="line"><span class="string">        proxy_pass http://localhost:11434;</span></span><br><span class="line"><span class="string">        proxy_set_header Host localhost; # 设为固定localhost</span></span><br><span class="line"><span class="string">        proxy_set_header Origin &quot;&quot;; # 清理origin头</span></span><br><span class="line"><span class="string">        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;</span></span><br><span class="line"><span class="string">        add_header Access-Control-Allow-Origin &quot;*&quot;; # 允许跨域</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        # API Key 认证配置</span></span><br><span class="line"><span class="string">        if (\$http_authorization != &quot;Bearer REPLACE_YOUR_API_KEY_HERE&quot;) &#123;</span></span><br><span class="line"><span class="string">            return 401;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure><h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">curl http://&#123;nginx_ip:nginx_port&#125;/v1/chat/completions \</span><br><span class="line">    -H <span class="string">&quot;Content-Type: application/json&quot;</span> \</span><br><span class="line">    -H <span class="string">&quot;Authorization: Bearer REPLACE_YOUR_API_KEY_HERE&quot;</span> \</span><br><span class="line">    -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">        &quot;model&quot;: &quot;gemma2:2b&quot;,</span></span><br><span class="line"><span class="string">        &quot;messages&quot;: [</span></span><br><span class="line"><span class="string">            &#123;</span></span><br><span class="line"><span class="string">                &quot;role&quot;: &quot;system&quot;,</span></span><br><span class="line"><span class="string">                &quot;content&quot;: &quot;You are a helpful assistant.&quot;</span></span><br><span class="line"><span class="string">            &#125;,</span></span><br><span class="line"><span class="string">            &#123;</span></span><br><span class="line"><span class="string">                &quot;role&quot;: &quot;user&quot;,</span></span><br><span class="line"><span class="string">                &quot;content&quot;: &quot;Hello!&quot;</span></span><br><span class="line"><span class="string">            &#125;</span></span><br><span class="line"><span class="string">        ]</span></span><br><span class="line"><span class="string">    &#125;&#x27;</span> -v</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> Tools </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> AI </tag>
+            
+            <tag> Ollama </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>使用dnsmasq部署DHCPv4服务</title>
       <link href="/2024/06/19/Network/dhcp/"/>
       <url>/2024/06/19/Network/dhcp/</url>
